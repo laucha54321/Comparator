@@ -15,7 +15,7 @@ def save_to_excel(df, sheet_name):
 
 ## Read Files#########################################################
 sap_df = pd.read_excel("./Database/Orders/SAP - ZSD18A_ARG/Orders.xlsx", engine="openpyxl")
-sfdc_df = pd.read_excel("./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-24-15-11-40.xlsx", sheet_name="Access - Integrity Order Report", engine="openpyxl")
+sfdc_df = pd.read_excel("./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-26-09-20-03.xlsx", sheet_name="Access - Integrity Order Report", engine="openpyxl")
 ######################################################################
 
 
@@ -106,7 +106,7 @@ print(taxNumberDifference.dtypes)
 save_to_excel(taxNumberDifference,"Tax Number Difference")
 ######################################################################
 
-## TaxNumber Terms  ####################################################
+## Order Terms  ####################################################
 with open('./Querys/orderTypeDifference.sql', 'r') as file:
         QUERY_ORDERTYPEDIFFERENCE_SAP_SFDC = file.read()
 
@@ -117,6 +117,16 @@ save_to_excel(orderTypeDifference,"Order Type  Difference")
 ######################################################################
 
 
+## TaxNumber Terms  ####################################################
+with open('./Querys/territoryDifference.sql', 'r') as file:
+        QUERY_TERRITORYDIFFERENCE_SAP_SFDC = file.read()
+
+territtoryDifference = duckdb.query(QUERY_TERRITORYDIFFERENCE_SAP_SFDC ).to_df()
+print(f"Territory Difference has {len(territtoryDifference)} unique rows")
+print(territtoryDifference.dtypes)
+save_to_excel(territtoryDifference,"Territory Difference")
+######################################################################
+
 if (0):
     ## Show all tables
     tables = duckdb.execute("SHOW TABLES").fetchall()
@@ -126,6 +136,6 @@ if (0):
         schema = duckdb.execute(f"DESCRIBE {table_name}").fetchall()
         for column in schema:
              print(column)
-        print("\n")
+        print("/n")
 
 
