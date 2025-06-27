@@ -1,7 +1,14 @@
 import pandas as pd
 import duckdb
 import os 
+import json
 
+from schemaValidator import validateJson
+
+querysPath = './querys.json'
+querysSchema = './querys-schema.json'
+
+validateJson(document_path=querysPath,schema=querysSchema)
 
 ### Save to excel function ####
 def save_to_excel(df, sheet_name):
@@ -13,11 +20,18 @@ def save_to_excel(df, sheet_name):
         with pd.ExcelWriter(file_path, mode='a', engine="openpyxl", if_sheet_exists='replace') as writer:
             df.to_excel(writer, index=False, sheet_name=sheet_name)
 
+with open(querysPath) as f:
+        document = json.load(f)
+
+for elm in document:
+      print(document[0]["name"])
+
+
+
 ## Read Files#########################################################
 sap_df = pd.read_excel("./Database/Orders/SAP - ZSD18A_ARG/Orders.xlsx", engine="openpyxl")
 sfdc_df = pd.read_excel("./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-26-09-20-03.xlsx", sheet_name="Access - Integrity Order Report", engine="openpyxl")
 ######################################################################
-
 
 
 ######################################################################

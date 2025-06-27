@@ -1,0 +1,9 @@
+[
+    {
+        "name":"Tax Number Mismatch",
+        "typeofcomparison":"Total Match",
+        "sapcolumn":"Cust. Code",
+        "sfdccolumn":"Account Name: SAP Tax Number 1",
+        "displaycolumns":["Sales Document","Account Name: SAP Tax Number 1","Cust. Code"]
+    }
+]

@@ -1,0 +1,17 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema#",
+    "$id": "querys",
+    "title": "querys",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "name": { "type": "string" },
+            "typeofcomparison": { "type": "string" },
+            "sapcolumn": { "type": "string" },
+            "sfdccolumn": { "type": "string" },
+            "displaycolumns": { "type": "array" }
+        },
+        "required": ["typeofcomparison", "sapcolumn", "sfdccolumn", "displaycolumns"]
+    }
+}
