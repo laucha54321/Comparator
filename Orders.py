@@ -1,3 +1,4 @@
+
 import pandas as pd
 import duckdb
 import os 
@@ -62,10 +63,10 @@ def queryFlowControl(data):
 
         print(f"\n========================================\nStarting comparisson {data["name"].upper()}.")
         result = 0
-        if(data["typeofcomparison"]).upper() == "TOTAL MATCH":
+        if(data["typeofcomparison"]) == "Total Match":
                 query = generate_sql_from_template(readQueryTemplate('./Querys/totalMatch.sql'), data)
                 result = applyQuery(query)
-        elif(data["typeofcomparison"]).upper() == "INNER JOIN":  
+        elif(data["typeofcomparison"]) == "Inner Join":  
                 query = generate_sql_from_template(readQueryTemplate('./Querys/joinInnerQuery.sql'),data)
                 result = applyQuery(query)
         else:
@@ -79,7 +80,7 @@ def queryFlowControl(data):
                 save_to_excel(result,f"{data["name"]}")
                 print(f"{data["name"].upper()} has {len(result)} unique rows")
         except:
-               print("Error Message: There was an error with the Query Output.")
+               print("Error Message: There was an error with the Query Output. If there is an error at this point, you should try deleting the output file.")
 
         print(f"========================================")
                 
@@ -114,3 +115,19 @@ print(f"SFDC Loaded {len(sfdc_df)} rows")
 
 for elm in document:
       queryFlowControl(elm)
+
+
+
+
+print(r"""
+   _____                                      _             
+  / ____|                                    | |            
+ | |     ___  _ __ ___  _ __   __ _ _ __ __ _| |_ ___  _ __ 
+ | |    / _ \| '_ ` _ \| '_ \ / _` | '__/ _` | __/ _ \| '__|
+ | |___| (_) | | | | | | |_) | (_| | | | (_| | || (_) | |   
+  \_____\___/|_| |_| |_| .__/ \__,_|_|  \__,_|\__\___/|_|   
+                       | |                                  
+                       |_|                                  
+                
+                  -- by Laureano Oliva --                                             
+""")
