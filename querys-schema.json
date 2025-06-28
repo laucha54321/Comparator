@@ -10,7 +10,14 @@
             "typeofcomparison": { "type": "string" },
             "sapcolumn": { "type": "string" },
             "sfdccolumn": { "type": "string" },
-            "displaycolumns": { "type": "array" }
+            "displaycolumns": { 
+                "anyOf": [
+                    { "type": "array", "items": { "type": "string" } },
+                    { "type": "string" }
+                ]
+            },
+            "registertable":{"type":"string"},
+            "table":{"type":"string"}
         },
         "required": ["typeofcomparison", "sapcolumn", "sfdccolumn", "displaycolumns"]
     }

@@ -1,9 +1,34 @@
 [
     {
+        "name":"Inner Join",
+        "typeofcomparison":"Inner Join",
+        "sapcolumn":"Sales Document",
+        "sfdccolumn":"SAP Order Number",
+        "displaycolumns": "All",
+        "registertable":"joined_sap_sfdc"
+    },
+    {
         "name":"Tax Number Mismatch",
+        "table":"joined_sap_sfdc",
         "typeofcomparison":"Total Match",
-        "sapcolumn":"Cust. Code",
+        "sapcolumn":"Tax Number 1 (CNPJ No.)",
         "sfdccolumn":"Account Name: SAP Tax Number 1",
-        "displaycolumns":["Sales Document","Account Name: SAP Tax Number 1","Cust. Code"]
+        "displaycolumns":["Sales Document","Account Name: SAP Tax Number 1","Tax Number 1 (CNPJ No.)"]
+    },
+    {
+        "name":"Territory Mismatch",
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "sapcolumn":"Customer Group 2",
+        "sfdccolumn":"Sales Office: Territory Code",
+        "displaycolumns":["Sales Document","Sales Office: Territory Code","Customer Group 2"]
+    },
+    {
+        "name":"Payment Term Mismatch",
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "sapcolumn":"Pay Term",
+        "sfdccolumn":"Payment Term: Payment Term Code",
+        "displaycolumns":["Sales Document", "Pay Term", "Payment Term: Payment Term Code"]
     }
 ]

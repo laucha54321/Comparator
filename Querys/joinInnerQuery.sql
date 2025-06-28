@@ -1,4 +1,5 @@
-SELECT *
+SELECT 
+ $displaycolumns
 FROM SAP_ORDERS AS sap
 INNER JOIN SFDC_ORDERS AS sfdc
-  ON sfdc."SAP Order Number"  = sap."Sales Document" 
+  ON sfdc."$sfdccolumn" = sap."$sapcolumn"
