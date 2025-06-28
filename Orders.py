@@ -56,27 +56,33 @@ def queryFlowControl(data):
                         return result
                 except Exception as e:
                         print(f"There was an error while executing {data["name"].upper()}")
-                        print(f"Error message: {e}")
+                        print(f"Error message: \n{e}")
                 return
                 
 
         print(f"\n========================================\nStarting comparisson {data["name"].upper()}.")
-        if(data["typeofcomparison"]) == "Total Match":
+        result = 0
+        if(data["typeofcomparison"]).upper() == "TOTAL MATCH":
                 query = generate_sql_from_template(readQueryTemplate('./Querys/totalMatch.sql'), data)
                 result = applyQuery(query)
-        elif(data["typeofcomparison"]) == "Inner Join":  
+        elif(data["typeofcomparison"]).upper() == "INNER JOIN":  
                 query = generate_sql_from_template(readQueryTemplate('./Querys/joinInnerQuery.sql'),data)
                 result = applyQuery(query)
         else:
-                print("Query not applied")
+                print(f"Error Message: No query applied. The query type {data["typeofcomparison"]} does not exists. ")
 
-        if "registertable" in data:
-                duckdb.register(data["registertable"], result)
 
-        save_to_excel(result,f"{data["name"]}")
-        print(f"{data["name"].upper()} has {len(result)} unique rows")
+        try:
+                if "registertable" in data:
+                        duckdb.register(data["registertable"], result)
+
+                save_to_excel(result,f"{data["name"]}")
+                print(f"{data["name"].upper()} has {len(result)} unique rows")
+        except:
+               print("Error Message: There was an error with the Query Output.")
+
         print(f"========================================")
-
+                
 ## Read Files#########################################################
 sap_df = pd.read_excel("./Database/Orders/SAP - ZSD18A_ARG/Orders.xlsx", engine="openpyxl")
 sfdc_df = pd.read_excel("./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-26-09-20-03.xlsx", sheet_name="Access - Integrity Order Report", engine="openpyxl")
