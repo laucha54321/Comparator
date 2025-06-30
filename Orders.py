@@ -1,7 +1,32 @@
+
 import pandas as pd
 import duckdb
 import os 
+import json
+from string import Template
 
+from schemaValidator import validateJson
+
+
+print(r"""
+   _____                                      _             
+  / ____|                                    | |            
+ | |     ___  _ __ ___  _ __   __ _ _ __ __ _| |_ ___  _ __ 
+ | |    / _ \| '_ ` _ \| '_ \ / _` | '__/ _` | __/ _ \| '__|
+ | |___| (_) | | | | | | |_) | (_| | | | (_| | || (_) | |   
+  \_____\___/|_| |_| |_| .__/ \__,_|_|  \__,_|\__\___/|_|   
+                       | |                                  
+                       |_|                                  
+                
+                  -- by Laureano Oliva --                                             
+""")
+
+DEBUGING = False
+
+querysPath = './querys.json'
+querysSchema = './querys-schema.json'
+
+validateJson(document_path=querysPath,schema=querysSchema)
 
 ### Save to excel function ####
 def save_to_excel(df, sheet_name):
@@ -13,17 +38,95 @@ def save_to_excel(df, sheet_name):
         with pd.ExcelWriter(file_path, mode='a', engine="openpyxl", if_sheet_exists='replace') as writer:
             df.to_excel(writer, index=False, sheet_name=sheet_name)
 
-## Read Files#########################################################
-sap_df = pd.read_excel("./Database/Orders/SAP - ZSD18A_ARG/Orders.xlsx", engine="openpyxl")
-sfdc_df = pd.read_excel("./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-26-09-20-03.xlsx", sheet_name="Access - Integrity Order Report", engine="openpyxl")
-######################################################################
+with open(querysPath) as f:
+        document = json.load(f)
 
+def generate_sql_from_template(template_str, config):
+    if(config["displaycolumns"] == "All"):
+        display_columns = "*"
+    else:
+        display_columns = ",\n    ".join(f'"{col}"' for col in config["displaycolumns"])
+    template = Template(template_str)
+    final = template.substitute(
+        displaycolumns=display_columns,
+        sapcolumn=config["sapcolumn"],
+        sfdccolumn=config["sfdccolumn"]
+    )
+    return final
+
+def readQueryTemplate(pathtoquery):
+        try:
+                with open(pathtoquery, 'r') as file:
+                        totalMatchQuery = file.read()
+                return totalMatchQuery
+        except Exception:
+              print(f"There was an Issue with the {pathtoquery} query.")
+              return
+
+def appFlowControl(data):
+        def applyQuery(query):
+                try: 
+                        result = duckdb.query(query).to_df()
+                        if(DEBUGING): print(f"\n --- QUERY ------------------------------ \n {query} \n ----------------------------------------")
+                        return result
+                except Exception as e:
+                        print(f"There was an error while executing {data["name"].upper()}")
+                        print(f"Error message: \n{e}")
+                return
+                
+
+        print(f"\n============================================================\n| {data["name"].upper()} | {data["typeofcomparison"]}. |\n============================================================\n")
+        
+        if(data["typeofcomparison"]) == "Total Match":
+                query = generate_sql_from_template(readQueryTemplate('./Querys/totalMatch.sql'), data)
+                df = applyQuery(query)  
+        elif(data["typeofcomparison"]) == "Inner Join":  
+                query = generate_sql_from_template(readQueryTemplate('./Querys/joinInnerQuery.sql'),data)
+                df = applyQuery(query) 
+                if(data["registertable"]):
+                        duckdb.register(view_name=data["registertable"], python_object=df)
+        elif(data["typeofcomparison"]) == "Read Excel Data":
+                df = readExcel(data["path"])
+                if(data["registertable"]):
+                        duckdb.register(view_name=data["registertable"], python_object=df)
+        elif(data["typeofcomparison"]) == "Custom":
+                df = applyQuery(readQueryTemplate(data["path"]))
+                if(data["registertable"]):
+                        duckdb.register(view_name=data["registertable"], python_object=df)
+               
+        else:
+                print(f"Error Message: No query applied. The query type {data["typeofcomparison"]} does not exists. ")
+                return
+        
+        print(f"{data["name"].upper()} has {len(df)} unique rows")
+
+        if data["savetoexcel"]:
+                try:
+                        save_to_excel(df,f"{data["name"]}")
+                        print(f"Data registered to excel file on sheet \"{data["name"]}\".")
+                        
+                except Exception as e:
+                        print(f"Error Message:\n {e}")
+        
+        print("============================================================\n")
+                
+def readExcel(path):
+        try:
+               print(f"Reading file {path}")
+               result =  pd.read_excel(path)
+               return result
+        except Exception as e: 
+               print(f"Error Message: \n {e}")
+
+""" ## Read Files#########################################################
+sap_df = readExcel("./Database/Orders/SAP - ZSD18A_ARG/Orders.xlsx")
+sfdc_df = readExcel("./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-26-09-20-03.xlsx")
+######################################################################
 
 
 ######################################################################
 ## RAW DATA SAP ######################################################
 duckdb.register("SAP_ORDERS_LINEITEMS", sap_df)
-print(f"SAP Loaded {len(sap_df)} rows")
 ######################################################################
 
 ## Query for unifying SAP Line Items. ################################
@@ -39,103 +142,11 @@ duckdb.execute("DROP VIEW IF EXISTS SAP_ORDERS_LINEITEMS")
 
 ## RAW DATA SFDC #####################################################
 duckdb.register("SFDC_ORDERS", sfdc_df)
-print(f"SFDC Loaded {len(sfdc_df)} rows")
 ######################################################################
-######################################################################
+##################################################################### """
 
+for elm in document:
+      appFlowControl(elm)
 
-
-## Outer with no inner Join query ####################################
-with open('./Querys/joinOuterQuery.sql', 'r') as file:
-        QUERY_OUTERJOINED_SAP_SFDC = file.read()
-
-joinedOuterQuery = duckdb.query(QUERY_OUTERJOINED_SAP_SFDC).to_df()
-print(f"Outer Data Query has {len(joinedOuterQuery)} unique rows")
-save_to_excel(joinedOuterQuery,"OuterElements")
-######################################################################
-## Inner Join query on 'SAP Order Number' and 'Sales Document'########
-
-# Read the SQL query from file
-with open('./Querys/joinInnerQuery.sql', 'r') as file:
-    QUERY_JOINED_SAP_SFDC = file.read()
-
-# Execute the query and save to a DuckDB table
-duckdb.execute(f"""
-    CREATE OR REPLACE TABLE joined_sap_sfdc AS
-    {QUERY_JOINED_SAP_SFDC}
-""")
-
-# Optional: Load into a DataFrame and export to Excel
-joinedInnerQuery = duckdb.query("SELECT * FROM joined_sap_sfdc").to_df()
-
-print(f"Joined Query has {len(joinedInnerQuery)} unique rows")
-print(joinedInnerQuery.dtypes)
-
-# Save to Excel
-save_to_excel(joinedInnerQuery, "InnerElements")
-
-######################################################################
-
-## Amount Difference #################################################
-with open('./Querys/amountDifference.sql', 'r') as file:
-        QUERY_DIFFERENCEAMMOUNT_SAP_SFDC = file.read()
-
-amountDifference = duckdb.query(QUERY_DIFFERENCEAMMOUNT_SAP_SFDC).to_df()
-print(f"Amount Difference has {len(amountDifference)} unique rows")
-print(amountDifference.dtypes)
-save_to_excel(amountDifference,"AmountDifference")
-######################################################################
-
-## Payment Terms  ####################################################
-with open('./Querys/paymentTerm.sql', 'r') as file:
-        QUERY_PAYMENTTERM_SAP_SFDC = file.read()
-
-paymentTermDifference = duckdb.query(QUERY_PAYMENTTERM_SAP_SFDC).to_df()
-print(f"Payment Difference has {len(paymentTermDifference)} unique rows")
-print(paymentTermDifference.dtypes)
-save_to_excel(paymentTermDifference,"PayTerm Difference")
-######################################################################
-
-## TaxNumber Terms  ####################################################
-with open('./Querys/taxNumberDifference.sql', 'r') as file:
-        QUERY_TAXNUMBERDIFFERENCE_SAP_SFDC = file.read()
-
-taxNumberDifference = duckdb.query(QUERY_PAYMENTTERM_SAP_SFDC).to_df()
-print(f"TaxNumber Difference has {len(taxNumberDifference)} unique rows")
-print(taxNumberDifference.dtypes)
-save_to_excel(taxNumberDifference,"Tax Number Difference")
-######################################################################
-
-## Order Terms  ####################################################
-with open('./Querys/orderTypeDifference.sql', 'r') as file:
-        QUERY_ORDERTYPEDIFFERENCE_SAP_SFDC = file.read()
-
-orderTypeDifference = duckdb.query(QUERY_ORDERTYPEDIFFERENCE_SAP_SFDC).to_df()
-print(f"Order Type Difference has {len(orderTypeDifference)} unique rows")
-print(orderTypeDifference.dtypes)
-save_to_excel(orderTypeDifference,"Order Type  Difference")
-######################################################################
-
-
-## TaxNumber Terms  ####################################################
-with open('./Querys/territoryDifference.sql', 'r') as file:
-        QUERY_TERRITORYDIFFERENCE_SAP_SFDC = file.read()
-
-territtoryDifference = duckdb.query(QUERY_TERRITORYDIFFERENCE_SAP_SFDC ).to_df()
-print(f"Territory Difference has {len(territtoryDifference)} unique rows")
-print(territtoryDifference.dtypes)
-save_to_excel(territtoryDifference,"Territory Difference")
-######################################################################
-
-if (0):
-    ## Show all tables
-    tables = duckdb.execute("SHOW TABLES").fetchall()
-    # Print schema for each table
-    for (table_name,) in tables:
-        print(f"Schema for table: {table_name}")
-        schema = duckdb.execute(f"DESCRIBE {table_name}").fetchall()
-        for column in schema:
-             print(column)
-        print("/n")
 
 

@@ -1,0 +1,70 @@
+[
+    {
+        "name":"Load SAP Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./Database/Orders/SAP - ZSD18A_ARG/Orders.xlsx",
+        "registertable":"SAP_ORDERS_LINEITEMS"
+    },
+    {
+        "name":"Load SFDC Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-26-09-20-03.xlsx",
+        "registertable":"SFDC_ORDERS"
+    },
+    {
+        "name":"Unify Items",
+        "typeofcomparison":"Custom",
+        "savetoexcel": false,
+        "path":"./Querys/unify_SAP_LineItems.sql",
+        "displaycolumns": "All",
+        "registertable":"SAP_ORDERS",
+        "comment":"This query is not adapted yet for parameter calling. It is Hardcoded, so previous actions should not be modified if this query is being used."
+    },
+    {
+        "name":"Join SFDC SAP",
+        "typeofcomparison":"Inner Join",
+        "savetoexcel": false,
+        "sapcolumn":"Sales Document",
+        "sfdccolumn":"SAP Order Number",
+        "displaycolumns": "All",
+        "registertable":"joined_sap_sfdc"
+    },
+    {
+        "name":"Ammount Mismatch",
+        "savetoexcel":true,
+        "typeofcomparison":"Custom",
+        "path":"./Querys/amountDifference.sql",
+        "registertable":false,
+        "displaycolumns": "All",
+        "comment":"This query is not adapted yet for parameter calling. It is Hardcoded, so previous actions should not be modified if this query is being used."
+    },
+    {
+        "name":"Tax Number Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "sapcolumn":"Tax Number 1 (CNPJ No.)",
+        "sfdccolumn":"Account Name: SAP Tax Number 1",
+        "displaycolumns":["Sales Document","Account Name: SAP Tax Number 1","Tax Number 1 (CNPJ No.)"]
+    },
+    {
+        "name":"Territory Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "sapcolumn":"Customer Group 2",
+        "sfdccolumn":"Sales Office: Territory Code",
+        "displaycolumns":["Sales Document","Sales Office: Territory Code","Customer Group 2"]
+    },
+    {
+        "name":"Payment Term Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "sapcolumn":"Pay Term",
+        "sfdccolumn":"Payment Term: Payment Term Code",
+        "displaycolumns":["Sales Document", "Pay Term", "Payment Term: Payment Term Code"]
+    }
+]

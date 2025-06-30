@@ -1,0 +1,33 @@
+[
+    {
+        "name":"Load SAP Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./Database/Invoices/SAP - ZSD34A_ARG/2023-2025.xlsx",
+        "registertable":"SAP_INVOICES"
+    },
+    {
+        "name":"Load SFDC Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./Database/Invoices/SFDC - Access - Invoices Report/Access - Invoices Report 5491-2025-06-13-12-14-06.xlsx",
+        "registertable":"SFDC_INVOICES"
+    },
+    {
+        "name":"Join SFDC SAP",
+        "typeofcomparison":"Custom",
+        "path":"./Querys/joinInnerQueryInvoices.sql",
+        "savetoexcel": false,
+        "displaycolumns": "All",
+        "registertable":"joined_sap_sfdc"
+    },
+    {
+        "name":"Tax Number Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "sapcolumn":"Billed Qty",
+        "sfdccolumn":"Bill QTY BAG",
+        "displaycolumns":["Billing Document","Line Number","Billed Qty","Bill QTY BAG"]
+    }
+]
