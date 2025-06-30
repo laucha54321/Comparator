@@ -63,7 +63,7 @@ def readQueryTemplate(pathtoquery):
               print(f"There was an Issue with the {pathtoquery} query.")
               return
 
-def queryFlowControl(data):
+def appFlowControl(data):
         def applyQuery(query):
                 try: 
                         result = duckdb.query(query).to_df()
@@ -75,41 +75,50 @@ def queryFlowControl(data):
                 return
                 
 
-        print(f"\n========================================\nStarting comparisson {data["name"].upper()}.")
-        result = 0
+        print(f"\n============================================================\n| {data["name"].upper()} | {data["typeofcomparison"]}. |\n============================================================\n")
+        
         if(data["typeofcomparison"]) == "Total Match":
                 query = generate_sql_from_template(readQueryTemplate('./Querys/totalMatch.sql'), data)
-                result = applyQuery(query)
+                df = applyQuery(query)  
         elif(data["typeofcomparison"]) == "Inner Join":  
                 query = generate_sql_from_template(readQueryTemplate('./Querys/joinInnerQuery.sql'),data)
-                result = applyQuery(query)
+                df = applyQuery(query) 
+                if(data["registertable"]):
+                        duckdb.register(view_name=data["registertable"], python_object=df)
+        elif(data["typeofcomparison"]) == "Read Excel Data":
+                df = readExcel(data["path"])
+                if(data["registertable"]):
+                        duckdb.register(view_name=data["registertable"], python_object=df)
+        elif(data["typeofcomparison"]) == "Custom":
+                df = applyQuery(readQueryTemplate(data["path"]))
+                if(data["registertable"]):
+                        duckdb.register(view_name=data["registertable"], python_object=df)
+               
         else:
                 print(f"Error Message: No query applied. The query type {data["typeofcomparison"]} does not exists. ")
+                return
+        
+        print(f"{data["name"].upper()} has {len(df)} unique rows")
 
-
-        try:
-                if "registertable" in data:
-                        duckdb.register(data["registertable"], result)
-
-                save_to_excel(result,f"{data["name"]}")
-                print(f"{data["name"].upper()} has {len(result)} unique rows")
-        except Exception as e:
-               print(f"Error Message:\n {e}")
-
-        print("========================================")
+        if data["savetoexcel"]:
+                try:
+                        save_to_excel(df,f"{data["name"]}")
+                        print(f"Data registered to excel file on sheet \"{data["name"]}\".")
+                        
+                except Exception as e:
+                        print(f"Error Message:\n {e}")
+        
+        print("============================================================\n")
                 
 def readExcel(path):
         try:
-               print("========================================")
                print(f"Reading file {path}")
                result =  pd.read_excel(path)
-               print(f"FILE READ: File has {len(result)} rows.")
-               print("========================================\n")
                return result
         except Exception as e: 
                print(f"Error Message: \n {e}")
 
-## Read Files#########################################################
+""" ## Read Files#########################################################
 sap_df = readExcel("./Database/Orders/SAP - ZSD18A_ARG/Orders.xlsx")
 sfdc_df = readExcel("./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-26-09-20-03.xlsx")
 ######################################################################
@@ -134,10 +143,10 @@ duckdb.execute("DROP VIEW IF EXISTS SAP_ORDERS_LINEITEMS")
 ## RAW DATA SFDC #####################################################
 duckdb.register("SFDC_ORDERS", sfdc_df)
 ######################################################################
-######################################################################
+##################################################################### """
 
 for elm in document:
-      queryFlowControl(elm)
+      appFlowControl(elm)
 
 
 

@@ -11,12 +11,12 @@ def validateJson(document_path, schema):
         schema = json.load(f)
 
     try:
-        print("========================================")
+        print("============================================================")
         print(f"Starting JSON ({document_path}) validation.")
         validate(instance=document,schema=schema)
         print(f"JSON File schema validation SUCCESSFUL")
-        print("========================================\n")
+        print("============================================================\n")
     except ValidationError as e:
         print("Json File Schema Error. Review the Schema of the file.")
         print(f"Error Message: {e.message}")
-        print("========================================\n")
+        print("============================================================\n")

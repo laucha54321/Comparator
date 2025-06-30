@@ -1,9 +1,9 @@
 SELECT
     "Sales Document",
-    "Cust Code",
+    "Cust. Code",
     "Order Amount",
     "Importe Neto",
-    "Total ZCP1",
+    "ZCP1 Condition Type Value",
     "Total Value",
     ABS("Importe Neto" - "Total Value") AS Difference_ImporteNeto_TotalValue,
 FROM joined_sap_sfdc

@@ -3,25 +3,67 @@
     "$id": "querys",
     "title": "querys",
     "type": "array",
-    "items": {
-        "type": "object",
-        "properties": {
-            "name": { "type": "string" },
-            "typeofcomparison": { 
-                "type": "string",
-                "enum": ["Total Match", "Parcial Match", "Inner Join"]
+    "items": { 
+        "anyOf": [
+            {   
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "typeofcomparison": { 
+                        "type": "string",
+                        "enum": ["Total Match", "Parcial Match", "Inner Join"]
+                    },
+                    "sapcolumn": { "type": "string" },
+                    "sfdccolumn": { "type": "string" },
+                    "savetoexcel":{ "type":"boolean" },
+                    "displaycolumns": { 
+                        "anyOf": [
+                            { "type": "array", "items": { "type": "string" } },
+                            { "type": "string" }
+                        ]
+                    },
+                    "registertable": {"anyOf":[{"type":"string"},{"type":"boolean"}]},
+                    "table":{"type":"string"}
+                },
+                "required": ["typeofcomparison", "sapcolumn", "sfdccolumn", "displaycolumns"]
             },
-            "sapcolumn": { "type": "string" },
-            "sfdccolumn": { "type": "string" },
-            "displaycolumns": { 
-                "anyOf": [
-                    { "type": "array", "items": { "type": "string" } },
-                    { "type": "string" }
-                ]
+            {   
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "typeofcomparison": { 
+                        "type": "string",
+                        "enum": ["Custom"]
+                    },
+                    "savetoexcel":{ "type":"boolean" },
+                    "path":{ "type": "string" },
+                    "displaycolumns": { 
+                        "anyOf": [
+                            { "type": "array", "items": { "type": "string" } },
+                            { "type": "string" }
+                        ]
+                    },
+                    "registertable": {"anyOf":[{"type":"string"},{"type":"boolean"}]}
+                },
+                "required": ["typeofcomparison", "displaycolumns"]
             },
-            "registertable":{"type":"string"},
-            "table":{"type":"string"}
-        },
-        "required": ["typeofcomparison", "sapcolumn", "sfdccolumn", "displaycolumns"]
+            {
+                "type": "object",
+                "properties": {
+                    "name": { "type": "string" },
+                    "path": { "type": "string" },
+                    "typeofcomparison": {
+                        "type": "string",
+                        "enum": ["Read Excel Data"]
+                    },
+                    "savetoexcel": {
+                        "type": "boolean",
+                        "default": false
+                    }
+    
+                },
+                "required": ["name", "path", "typeofcomparison"]
+            }
+        ]
     }
 }
