@@ -7,6 +7,20 @@ from string import Template
 
 from schemaValidator import validateJson
 
+
+print(r"""
+   _____                                      _             
+  / ____|                                    | |            
+ | |     ___  _ __ ___  _ __   __ _ _ __ __ _| |_ ___  _ __ 
+ | |    / _ \| '_ ` _ \| '_ \ / _` | '__/ _` | __/ _ \| '__|
+ | |___| (_) | | | | | | |_) | (_| | | | (_| | || (_) | |   
+  \_____\___/|_| |_| |_| .__/ \__,_|_|  \__,_|\__\___/|_|   
+                       | |                                  
+                       |_|                                  
+                
+                  -- by Laureano Oliva --                                             
+""")
+
 DEBUGING = False
 
 querysPath = './querys.json'
@@ -79,21 +93,31 @@ def queryFlowControl(data):
 
                 save_to_excel(result,f"{data["name"]}")
                 print(f"{data["name"].upper()} has {len(result)} unique rows")
-        except:
-               print("Error Message: There was an error with the Query Output. If there is an error at this point, you should try deleting the output file.")
+        except Exception as e:
+               print(f"Error Message:\n {e}")
 
-        print(f"========================================")
+        print("========================================")
                 
+def readExcel(path):
+        try:
+               print("========================================")
+               print(f"Reading file {path}")
+               result =  pd.read_excel(path)
+               print(f"FILE READ: File has {len(result)} rows.")
+               print("========================================\n")
+               return result
+        except Exception as e: 
+               print(f"Error Message: \n {e}")
+
 ## Read Files#########################################################
-sap_df = pd.read_excel("./Database/Orders/SAP - ZSD18A_ARG/Orders.xlsx", engine="openpyxl")
-sfdc_df = pd.read_excel("./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-26-09-20-03.xlsx", sheet_name="Access - Integrity Order Report", engine="openpyxl")
+sap_df = readExcel("./Database/Orders/SAP - ZSD18A_ARG/Orders.xlsx")
+sfdc_df = readExcel("./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-26-09-20-03.xlsx")
 ######################################################################
 
 
 ######################################################################
 ## RAW DATA SAP ######################################################
 duckdb.register("SAP_ORDERS_LINEITEMS", sap_df)
-print(f"SAP Loaded {len(sap_df)} rows")
 ######################################################################
 
 ## Query for unifying SAP Line Items. ################################
@@ -109,7 +133,6 @@ duckdb.execute("DROP VIEW IF EXISTS SAP_ORDERS_LINEITEMS")
 
 ## RAW DATA SFDC #####################################################
 duckdb.register("SFDC_ORDERS", sfdc_df)
-print(f"SFDC Loaded {len(sfdc_df)} rows")
 ######################################################################
 ######################################################################
 
@@ -118,16 +141,3 @@ for elm in document:
 
 
 
-
-print(r"""
-   _____                                      _             
-  / ____|                                    | |            
- | |     ___  _ __ ___  _ __   __ _ _ __ __ _| |_ ___  _ __ 
- | |    / _ \| '_ ` _ \| '_ \ / _` | '__/ _` | __/ _ \| '__|
- | |___| (_) | | | | | | |_) | (_| | | | (_| | || (_) | |   
-  \_____\___/|_| |_| |_| .__/ \__,_|_|  \__,_|\__\___/|_|   
-                       | |                                  
-                       |_|                                  
-                
-                  -- by Laureano Oliva --                                             
-""")
