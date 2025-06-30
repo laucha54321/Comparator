@@ -17,13 +17,14 @@ print(r"""
   \_____\___/|_| |_| |_| .__/ \__,_|_|  \__,_|\__\___/|_|   
                        | |                                  
                        |_|                                  
+      
                 
                   -- by Laureano Oliva --                                             
 """)
 
 DEBUGING = False
 
-querysPath = './querys.json'
+querysPath = './sequences/Invoices.json'
 querysSchema = './querys-schema.json'
 
 validateJson(document_path=querysPath,schema=querysSchema)
