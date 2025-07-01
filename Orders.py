@@ -24,7 +24,7 @@ print(r"""
 
 DEBUGING = False
 
-querysPath = './sequences/Invoices.json'
+querysPath = './sequences/Orders.json'
 querysSchema = './querys-schema.json'
 
 validateJson(document_path=querysPath,schema=querysSchema)
@@ -50,8 +50,8 @@ def generate_sql_from_template(template_str, config):
     template = Template(template_str)
     final = template.substitute(
         displaycolumns=display_columns,
-        sapcolumn=config["sapcolumn"],
-        sfdccolumn=config["sfdccolumn"]
+        column1=config["column1"],
+        column2=config["column2"]
     )
     return final
 

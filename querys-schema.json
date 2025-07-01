@@ -13,8 +13,8 @@
                         "type": "string",
                         "enum": ["Total Match", "Parcial Match", "Inner Join"]
                     },
-                    "sapcolumn": { "type": "string" },
-                    "sfdccolumn": { "type": "string" },
+                    "column1": { "type": "string" },
+                    "column2": { "type": "string" },
                     "savetoexcel":{ "type":"boolean" },
                     "displaycolumns": { 
                         "anyOf": [
@@ -25,7 +25,7 @@
                     "registertable": {"anyOf":[{"type":"string"},{"type":"boolean"}]},
                     "table":{"type":"string"}
                 },
-                "required": ["typeofcomparison", "sapcolumn", "sfdccolumn", "displaycolumns"]
+                "required": ["typeofcomparison", "column1", "column2", "displaycolumns"]
             },
             {   
                 "type": "object",

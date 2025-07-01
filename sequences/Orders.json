@@ -26,8 +26,8 @@
         "name":"Join SFDC SAP",
         "typeofcomparison":"Inner Join",
         "savetoexcel": false,
-        "sapcolumn":"Sales Document",
-        "sfdccolumn":"SAP Order Number",
+        "column1":"Sales Document",
+        "column2":"SAP Order Number",
         "displaycolumns": "All",
         "registertable":"joined_sap_sfdc"
     },
@@ -45,8 +45,8 @@
         "savetoexcel":true,
         "table":"joined_sap_sfdc",
         "typeofcomparison":"Total Match",
-        "sapcolumn":"Tax Number 1 (CNPJ No.)",
-        "sfdccolumn":"Account Name: SAP Tax Number 1",
+        "column1":"Tax Number 1 (CNPJ No.)",
+        "column2":"Account Name: SAP Tax Number 1",
         "displaycolumns":["Sales Document","Account Name: SAP Tax Number 1","Tax Number 1 (CNPJ No.)"]
     },
     {
@@ -54,8 +54,8 @@
         "savetoexcel":true,
         "table":"joined_sap_sfdc",
         "typeofcomparison":"Total Match",
-        "sapcolumn":"Customer Group 2",
-        "sfdccolumn":"Sales Office: Territory Code",
+        "column1":"Customer Group 2",
+        "column2":"Sales Office: Territory Code",
         "displaycolumns":["Sales Document","Sales Office: Territory Code","Customer Group 2"]
     },
     {
@@ -63,8 +63,8 @@
         "savetoexcel":true,
         "table":"joined_sap_sfdc",
         "typeofcomparison":"Total Match",
-        "sapcolumn":"Pay Term",
-        "sfdccolumn":"Payment Term: Payment Term Code",
+        "column1":"Pay Term",
+        "column2":"Payment Term: Payment Term Code",
         "displaycolumns":["Sales Document", "Pay Term", "Payment Term: Payment Term Code"]
     }
 ]
