@@ -66,5 +66,15 @@
         "column1":"Pay Term",
         "column2":"Payment Term: Payment Term Code",
         "displaycolumns":["Sales Document", "Pay Term", "Payment Term: Payment Term Code"]
+    },
+    {
+        "name":"Combine Two Columns",
+        "typeofcomparison":"Combine Two Columns",
+        "table": "joined_sap_sfdc",
+        "column1":"Pay Term",
+        "column2":"Payment Term: Payment Term Code",
+        "registertable":"joined_sap_sfdc",
+        "savetoexcel":"combined query",
+        "displaycolumns":["Sales Document", "Pay Term", "Payment Term: Payment Term Code"]
     }
 ]
