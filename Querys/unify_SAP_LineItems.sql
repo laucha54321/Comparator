@@ -8,6 +8,7 @@ SELECT
   MAX("Billing Date") AS "Billing Date", 
   SUM("ZCP1 Condition Type Value") AS "ZCP1 Condition Type Value",
   SUM("Rejected Qty") AS "Rejected Qty",
+  SUM("ZK18 Condition Type Value") AS "ZK18 Condition Type Value",
   SUM(("Net Price" * "Order Quantity") - ("Rejected Qty" * "Net Price")) AS "Total Value"
 FROM SAP_ORDERS_LINEITEMS
 GROUP BY "Sales Document"

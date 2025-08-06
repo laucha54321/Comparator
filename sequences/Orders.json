@@ -3,14 +3,14 @@
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/Orders/SAP - ZSD18A_ARG/Orders.xlsx",
+        "path": "./Database/Orders/SAP - ZSD18A_ARG/Base para testing 06-08-25 SAP.xlsx",
         "registertable":"SAP_ORDERS_LINEITEMS"
     },
     {
         "name":"Load SFDC Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-26-09-20-03.xlsx",
+        "path": "./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-08-06-09-34-12.xlsx",
         "registertable":"SFDC_ORDERS"
     },
     {
