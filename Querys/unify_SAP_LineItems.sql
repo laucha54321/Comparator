@@ -1,6 +1,9 @@
 SELECT 
   "Sales Document", 
   MAX("Cust. Code") AS "Cust. Code", 
+  MAX("Cons. Code") AS "Cons. Code",
+  MAX("Order Reason Desc.") AS "Order Reason Desc.",
+  MAX("Commission Agent Desc.") AS "Commission Agent Desc.",
   MAX("Sales Document Type") AS "Sales Document Type", 
   MAX("Pay Term") AS "Pay Term", 
   MAX("Customer Group 2") AS "Customer Group 2",

@@ -99,6 +99,9 @@ def appFlowControl(data):
                 df = applyQuery(query)
                 if(data["registertable"]):
                         duckdb.register(view_name=data["registertable"], python_object=df)
+        elif(data["typeofcomparison"] == "Parcial Match"):
+               query = generate_sql_from_template(readQueryTemplate('./Querys/parcialMatch.sql'),data)
+               df = applyQuery(query)
                  
         else:
                 print(f"Error Message: No query applied. The query type {data["typeofcomparison"]} does not exists. ")
