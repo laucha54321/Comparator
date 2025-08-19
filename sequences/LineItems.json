@@ -1,0 +1,42 @@
+[
+    {
+        "name":"Load SAP Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": true,
+        "path": "./Database/Line Items/SAP - ZSD18A_ARG/SAP - ZSD18A_ARG - julio agosto 2025.xlsx",
+        "registertable":"SAP_ORDERS_LINEITEMS"
+    },
+    {
+        "name":"Load SFDC Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./Database/Line Items/Access - Integrity Line Item Report/Access - Integrity Line Item Report-2025-08-18-15-45-16.xlsx",
+        "registertable":"SFDC_ORDERS"
+    },
+    {
+        "name":"Unify Items",
+        "typeofcomparison":"Custom",
+        "savetoexcel": true,
+        "path":"./Querys/joinInner_byLineItem.sql",
+        "displaycolumns": "All",
+        "registertable":"joined_sap_sfdc"
+    },
+    {
+        "name":"Material Code Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "column1":"Material",
+        "column2":"Product Code",
+        "displaycolumns":["Sales Document","Sales Document Item","Material","Product Code"]
+    },
+    {
+        "name":"Quantity Code Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "column1":"Order Quantity",
+        "column2":"Order Quantity",
+        "displaycolumns":["Sales Document","Sales Document Item","Order Quantity","Order Quantity"]
+    }
+]
