@@ -102,6 +102,9 @@ def appFlowControl(data):
         elif(data["typeofcomparison"] == "Parcial Match"):
                query = generate_sql_from_template(readQueryTemplate('./Querys/parcialMatch.sql'),data)
                df = applyQuery(query)
+        elif(data["typeofcomparison"] == "Outer Join"):
+               query = generate_sql_from_template(readQueryTemplate('./Querys/joinOuterQuery.sql'),data)
+               df = applyQuery(query)
                  
         else:
                 print(f"Error Message: No query applied. The query type {data["typeofcomparison"]} does not exists. ")

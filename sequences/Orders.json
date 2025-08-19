@@ -3,14 +3,14 @@
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/Orders/SAP - ZSD18A_ARG/Base para testing 06-08-25 SAP.xlsx",
+        "path": "./Database/Test 15-18 of 08/SAP DB.xlsx",
         "registertable":"SAP_ORDERS_LINEITEMS"
     },
     {
-        "name":"Load SFDC Data",
+        "name":"Load SFDC Orders Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-08-18-10-43-27.xlsx",
+        "path": "./Database/Test 15-18 of 08/Access - Integrity Order Report-2025-08-19-09-56-13.xlsx",
         "registertable":"SFDC_ORDERS"
     },
     {
@@ -25,7 +25,16 @@
     {
         "name":"Join SFDC SAP",
         "typeofcomparison":"Inner Join",
-        "savetoexcel": false,
+        "savetoexcel": true,
+        "column1":"Sales Document",
+        "column2":"SAP Order Number",
+        "displaycolumns": "All",
+        "registertable":"joined_sap_sfdc"
+    },
+    {
+        "name":"Outer SFDC SAP",
+        "typeofcomparison":"Outer Join",
+        "savetoexcel": true,
         "column1":"Sales Document",
         "column2":"SAP Order Number",
         "displaycolumns": "All",

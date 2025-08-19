@@ -2,24 +2,33 @@
     {
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
-        "savetoexcel": true,
-        "path": "./Database/Line Items/SAP - ZSD18A_ARG/SAP - ZSD18A_ARG - julio agosto 2025.xlsx",
+        "savetoexcel": false,
+        "path": "./Database/Test 15-18 of 08/SAP DB.xlsx",
         "registertable":"SAP_ORDERS_LINEITEMS"
     },
     {
-        "name":"Load SFDC Data",
+        "name":"Load SFDC Line Items Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/Line Items/Access - Integrity Line Item Report/Access - Integrity Line Item Report-2025-08-18-15-45-16.xlsx",
+        "path": "./Database/Test 15-18 of 08/Access - Integrity Line Item Report-2025-08-19-09-54-19.xlsx",
         "registertable":"SFDC_ORDERS"
     },
     {
-        "name":"Unify Items",
+        "name":"Join Line Items SFDC SAP",
         "typeofcomparison":"Custom",
         "savetoexcel": true,
         "path":"./Querys/joinInner_byLineItem.sql",
         "displaycolumns": "All",
         "registertable":"joined_sap_sfdc"
+    },
+    {
+        "name":"Outer Join Line Items",
+        "typeofcomparison":"Custom",
+        "savetoexcel": true,
+        "registertable":false,
+        "path":"./Querys/joinOuterQuery-lineItem.sql",
+        "displaycolumns": "All",
+        "comment":"This query is not adapted yet for parameter calling. It is Hardcoded, so previous actions should not be modified if this query is being used."
     },
     {
         "name":"Material Code Mismatch",
