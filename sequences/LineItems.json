@@ -3,14 +3,14 @@
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/Test 15-18 of 08/SAP DB.xlsx",
+        "path": "./Database/08-09-2025/SAP DB.xlsx",
         "registertable":"SAP_ORDERS_LINEITEMS"
     },
     {
         "name":"Load SFDC Line Items Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/Test 15-18 of 08/Access - Integrity Line Item Report-2025-08-19-09-54-19.xlsx",
+        "path": "./Database/08-09-2025/Access - Integrity Line Item Report-2025-09-08-10-16-29.xlsx",
         "registertable":"SFDC_ORDERS"
     },
     {
@@ -40,12 +40,21 @@
         "displaycolumns":["Sales Document","Sales Document Item","Material","Product Code"]
     },
     {
-        "name":"Quantity Code Mismatch",
+        "name":"Quantity Mismatch",
         "savetoexcel":true,
         "table":"joined_sap_sfdc",
         "typeofcomparison":"Total Match",
-        "column1":"Order Quantity",
+        "column1":"Quantity",
         "column2":"Order Quantity",
-        "displaycolumns":["Sales Document","Sales Document Item","Order Quantity","Order Quantity"]
+        "displaycolumns":["Sales Document","Sales Document Item","Quantity","Order Quantity"]
+    },
+    {
+        "name":"Rejected Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "column1":"Total Rejected Qty",
+        "column2":"Rejected Qty",
+        "displaycolumns":["Sales Document","Sales Document Item","Total Rejected Qty","Rejected Qty"]
     }
 ]

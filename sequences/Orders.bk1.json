@@ -3,14 +3,14 @@
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/08-09-2025/SAP DB.xlsx",
+        "path": "./Database/29-09-2025/SAP DB.xlsx",
         "registertable":"SAP_ORDERS_LINEITEMS"
     },
     {
         "name":"Load SFDC Orders Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/08-09-2025/Access - Integrity Order Report-2025-09-08-10-19-26.xlsx",
+        "path": "./Database/29-09-2025/Access - Integrity Order Report-2025-09-29-10-56-47.xlsx",
         "registertable":"SFDC_ORDERS"
     },
     {
@@ -32,6 +32,15 @@
         "registertable":"joined_sap_sfdc"
     },
     {
+        "name":"Outer SFDC SAP",
+        "typeofcomparison":"Outer Join",
+        "savetoexcel": true,
+        "column1":"Sales Document",
+        "column2":"SAP Order Number",
+        "displaycolumns": "All",
+        "registertable":"joined_sap_sfdc"
+    },
+    {
         "name":"Ammount Mismatch",
         "savetoexcel":true,
         "typeofcomparison":"Custom",
@@ -39,6 +48,15 @@
         "registertable":false,
         "displaycolumns": "All",
         "comment":"This query is not adapted yet for parameter calling. It is Hardcoded, so previous actions should not be modified if this query is being used."
+    },
+    {
+        "name":"Cust. Code Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "column1":"Cust. Code",
+        "column2":"Account New SAP Code",
+        "displaycolumns":["Sales Document","Cust. Code","Shipping Address","Billing Date"]
     },
     {
         "name":"Cons. Code Mismatch",
@@ -49,6 +67,43 @@
         "column2":"Shipping Address",
         "displaycolumns":["Sales Document","Cons. Code","Shipping Address","Billing Date"],
         "comment":"The order of the columns is relevant. The entire code in column1 will be validated if it is inside column 2. So column1 should be contained inside column two, not the other way around."
+    },
+    {
+        "name":"Territory Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "column1":"Customer Group 2",
+        "column2":"Sales Office: Territory Code",
+        "displaycolumns":["Sales Document","Sales Office: Territory Code","Customer Group 2","Billing Date"]
+    },
+    {
+        "name":"Payment Term Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "column1":"Pay Term",
+        "column2":"Payment Term: Payment Term Code",
+        "displaycolumns":["Sales Document", "Pay Term", "Payment Term: Payment Term Code","Billing Date"]
+    },
+    {
+        "name":"Sales document type Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Parcial Match",
+        "column1":"Sales Document Type",
+        "column2":"Order Type",
+        "displaycolumns":["Sales Document","Cons. Code","Shipping Address","Billing Date"],
+        "comment":"The order of the columns is relevant. The entire code in column1 will be validated if it is inside column 2. So column1 should be contained inside column two, not the other way around."
+    },
+    {
+        "name":"Order Reason Mismatch",
+        "savetoexcel":true,
+        "table":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "column1":"Order Reason Desc.",
+        "column2":"Order Reason",
+        "displaycolumns":["Sales Document","Order Reason Desc.","Order Reason","Billing Date"]
     },
     {
         "name":"Commision Agent Mismatch",

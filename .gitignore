@@ -1,3 +1,6 @@
 *.xlsx
 *.XLSX
 __pycache__/
+/dist
+/build
+/Database
