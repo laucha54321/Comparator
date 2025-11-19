@@ -3,12 +3,6 @@ SELECT
     "Cust. Code",
     "Order Amount",
     "Importe Neto",
-    "ZCP1 Condition Type Value",
-    "Total Value",
-    "ZK18 Condition Type Value",
-    "Rejected Qty",
-    "Billing Date",
-    "Sales Document Type",
     ABS("Importe Neto" - "Total Value") AS Difference_ImporteNeto_TotalValue,
 FROM joined_sap_sfdc
 WHERE (ABS("Importe Neto" - "Total Value") > 10);
