@@ -3,14 +3,14 @@
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/08-09-2025/SAP DB.xlsx",
+        "path": "./Database/14-11-2025/SAP DB.xlsx",
         "registertable":"SAP_ORDERS_LINEITEMS"
     },
     {
         "name":"Load SFDC Line Items Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/08-09-2025/Access - Integrity Line Item Report-2025-09-08-10-16-29.xlsx",
+        "path": "./Database/14-11-2025/Access - Integrity Line Item Report.xlsx",
         "registertable":"SFDC_ORDERS"
     },
     {
