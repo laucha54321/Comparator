@@ -1,4 +1,4 @@
 SELECT
     $displaycolumns
-FROM joined_sap_sfdc
-WHERE "$column2" != "$column1";
+FROM $table1
+WHERE Cast("$column2" as VARCHAR) != Cast("$column1"as VARCHAR);

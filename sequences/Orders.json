@@ -3,47 +3,77 @@
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/01-12-2025/SAP Orders.xlsx",
+        "path": "./database/01-12-2025/SAP Orders.xlsx",
         "registertable":"SAP_ORDERS_LINEITEMS"
     },
     {
         "name":"Load SFDC Orders Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/01-12-2025/Access - Integrity Order Report.xlsx",
+        "path": "./database/01-12-2025/Access - Integrity Order Report.xlsx",
         "registertable":"SFDC_ORDERS"
+    },
+    {
+        "name":"Combine",
+        "typeofcomparison":"Combine Two Columns",
+        "savetoexcel": true,
+        "table1":"SAP_ORDERS_LINEITEMS",
+        "column1":"Sales Document",
+        "column2":"Sales Document",
+        "registercolumn":"combination",
+        "registertable":false
     },
     {
         "name":"Unify Items",
         "typeofcomparison":"Custom",
         "savetoexcel": false,
-        "path":"./Querys/unify_SAP_LineItems.sql",
+        "path":"./querys/custom/unify_SAP_LineItems.sql",
         "displaycolumns": "All",
         "registertable":"SAP_ORDERS",
         "comment":"This query is not adapted yet for parameter calling. It is Hardcoded, so previous actions should not be modified if this query is being used."
     },
     {
-        "name":"Join SFDC SAP",
+        "name":"Join Outer SFDC SAP",
+        "typeofcomparison":"Outer Join",
+        "savetoexcel": true,
+        "table1":"SAP_ORDERS",
+        "table2":"SFDC_ORDERS",
+        "column1":"Sales Document",
+        "column2":"SAP Order Number",
+        "displaycolumns": "All",
+        "registertable":false
+    },
+    {
+        "name":"Join Inner SFDC SAP",
         "typeofcomparison":"Inner Join",
         "savetoexcel": true,
+        "table1":"SAP_ORDERS",
+        "table2":"SFDC_ORDERS",
         "column1":"Sales Document",
         "column2":"SAP Order Number",
         "displaycolumns": "All",
         "registertable":"joined_sap_sfdc"
     },
     {
-        "name":"Ammount Mismatch",
-        "savetoexcel":true,
-        "typeofcomparison":"Custom",
-        "path":"./Querys/amountDifference.sql",
-        "registertable":false,
-        "displaycolumns": "All",
-        "comment":"This query is not adapted yet for parameter calling. It is Hardcoded, so previous actions should not be modified if this query is being used."
+        "name": "Ammount Mismatch",
+        "savetoexcel": true,
+        "typeofcomparison": "Amount Difference",
+        "table1": "joined_sap_sfdc",
+        "column1": "Importe Neto",
+        "column2": "Total Value",
+        "threshold": 10,
+        "displaycolumns": [
+            "Sales Document",
+            "Cust. Code",
+            "Order Amount",
+            "Importe Neto"
+        ],
+        "registertable": false
     },
     {
         "name":"Territory Mismatch",
         "savetoexcel":true,
-        "table":"joined_sap_sfdc",
+        "table1":"joined_sap_sfdc",
         "typeofcomparison":"Total Match",
         "column1":"Customer Group 2",
         "column2":"Sales Office: Territory Code",
@@ -52,7 +82,7 @@
     {
         "name":"Cons. Code Mismatch",
         "savetoexcel":true,
-        "table":"joined_sap_sfdc",
+        "table1":"joined_sap_sfdc",
         "typeofcomparison":"Parcial Match",
         "column1":"Cons. Code",
         "column2":"Shipping Address",
@@ -62,17 +92,17 @@
     {
         "name":"Commision Agent Mismatch",
         "savetoexcel":true,
-        "table":"joined_sap_sfdc",
+        "table1":"joined_sap_sfdc",
         "typeofcomparison":"Parcial Match",
         "column1":"Commission Agent Desc.",
         "column2":"Commission Agent (Reporting)",
-        "displaycolumns":["Sales Document","Commission Agent Desc.","Commission Agent (Reporting)","Billing Date"],
+        "displaycolumns":["Sales Document","Commission Agent Desc.","Commission Agent (Reporting)"],
         "comment":"The order of the columns is relevant. The entire code in column1 will be validated if it is inside column 2. So column1 should be contained inside column two, not the other way around."
     },
     {
         "name":"Tax Number Mismatch",
         "savetoexcel":true,
-        "table":"joined_sap_sfdc",
+        "table1":"joined_sap_sfdc",
         "typeofcomparison":"Total Match",
         "column1":"Tax Number 1 (CNPJ No.)",
         "column2":"Account Name: SAP Tax Number 1",

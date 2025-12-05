@@ -42,17 +42,41 @@ with open(querysPath) as f:
         document = json.load(f)
 
 def generate_sql_from_template(template_str, config):
-    if(config["displaycolumns"] == "All"):
-        display_columns = "*"
+    """Generate SQL from template with configuration"""
+    try:
+        template = Template(template_str)
+        
+        # Use .get() with defaults - much cleaner!
+        substitutions = {
+            "displaycolumns": get_display_columns(config.get("displaycolumns", "*")),
+            "column1": config.get("column1", ""),
+            "column2": config.get("column2", ""),
+            "table1": config.get("table1", ""),
+            "table2": config.get("table2",""),
+            "registercolumn": config.get("registercolumn",""),
+            "path": config.get("path", ""),
+            "threshold": config.get("threshold", "0"),
+            # Add all possible fields with defaults
+        }
+        
+        # Remove empty values that might break the template
+        substitutions = {k: v for k, v in substitutions.items() if v != ""}
+        
+        final = template.safe_substitute(**substitutions)
+        return final
+        
+    except Exception as e:
+        print(f"Error generating SQL template: {e}")
+        return ""
+    
+def get_display_columns(display_cols):
+    """Helper to format display columns"""
+    if display_cols == "All" or display_cols == "*":
+        return "*"
+    elif isinstance(display_cols, list):
+        return ",\n    ".join(f'"{col}"' for col in display_cols)
     else:
-        display_columns = ",\n    ".join(f'"{col}"' for col in config["displaycolumns"])
-    template = Template(template_str)
-    final = template.substitute(
-        displaycolumns=display_columns,
-        column1=config["column1"],
-        column2=config["column2"]
-    )
-    return final
+        return "*"
 
 def readQueryTemplate(pathtoquery):
         try:
@@ -78,13 +102,21 @@ def appFlowControl(data):
         print(f"\n============================================================\n| {data["name"].upper()} | {data["typeofcomparison"]}. |\n============================================================\n")
         
         if(data["typeofcomparison"]) == "Total Match":
-                query = generate_sql_from_template(readQueryTemplate('./Querys/totalMatch.sql'), data)
-                df = applyQuery(query)  
+                query = generate_sql_from_template(readQueryTemplate('./querys/totalMatch.sql'), data)
+                df = applyQuery(query)
         elif(data["typeofcomparison"]) == "Inner Join":  
-                query = generate_sql_from_template(readQueryTemplate('./Querys/joinInnerQuery.sql'),data)
+                query = generate_sql_from_template(readQueryTemplate('./querys/joinInnerQuery.sql'),data)
                 df = applyQuery(query) 
                 if(data["registertable"]):
                         duckdb.register(view_name=data["registertable"], python_object=df)
+        elif(data["typeofcomparison"]) == "Outer Join":  
+                query = generate_sql_from_template(readQueryTemplate('./querys/joinOuterQuery.sql'),data)
+                df = applyQuery(query) 
+                if(data["registertable"]):
+                        duckdb.register(view_name=data["registertable"], python_object=df)
+        elif(data["typeofcomparison"] == "Amount Difference"):
+                query = generate_sql_from_template(readQueryTemplate('./querys/amountDifference.sql'), data)
+                df = applyQuery(query)
         elif(data["typeofcomparison"]) == "Read Excel Data":
                 df = readExcel(data["path"])
                 if(data["registertable"]):
@@ -94,15 +126,15 @@ def appFlowControl(data):
                 if(data["registertable"]):
                         duckdb.register(view_name=data["registertable"], python_object=df)
         elif(data["typeofcomparison"]) == "Combine Two Columns":
-                query = generate_sql_from_template(readQueryTemplate('./Querys/combineTwoColumns.sql'),data)
+                query = generate_sql_from_template(readQueryTemplate('./querys/combineTwoColumns.sql'),data)
                 df = applyQuery(query)
                 if(data["registertable"]):
                         duckdb.register(view_name=data["registertable"], python_object=df)
         elif(data["typeofcomparison"] == "Parcial Match"):
-               query = generate_sql_from_template(readQueryTemplate('./Querys/parcialMatch.sql'),data)
+               query = generate_sql_from_template(readQueryTemplate('./querys/parcialMatch.sql'),data)
                df = applyQuery(query)
         elif(data["typeofcomparison"] == "Outer Join"):
-               query = generate_sql_from_template(readQueryTemplate('./Querys/joinOuterQuery.sql'),data)
+               query = generate_sql_from_template(readQueryTemplate('./querys/joinOuterQuery.sql'),data)
                df = applyQuery(query)
                  
         else:

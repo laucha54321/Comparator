@@ -1,68 +1,259 @@
 {
     "$schema": "https://json-schema.org/draft-07/schema#",
     "$id": "querys",
-    "title": "querys",
+    "title": "Query Configuration Schema",
+    "description": "Schema for defining query sequences with different comparison types",
     "type": "array",
-    "items": { 
+    "items": {
         "anyOf": [
-            {   
-                "type": "object",
-                "properties": {
-                    "name": { "type": "string" },
-                    "typeofcomparison": { 
-                        "type": "string",
-                        "enum": ["Total Match", "Parcial Match", "Inner Join", "Combine Two Columns","Outer Join"]
-                    },
-                    "column1": { "type": "string" },
-                    "column2": { "type": "string" },
-                    "savetoexcel":{ "type":"boolean" },
-                    "displaycolumns": { 
-                        "anyOf": [
-                            { "type": "array", "items": { "type": "string" } },
-                            { "type": "string" }
-                        ]
-                    },
-                    "registertable": {"anyOf":[{"type":"string"},{"type":"boolean"}]},
-                    "table":{"type":"string"}
-                },
-                "required": ["typeofcomparison", "column1", "column2", "displaycolumns"]
-            },
-            {   
-                "type": "object",
-                "properties": {
-                    "name": { "type": "string" },
-                    "typeofcomparison": { 
-                        "type": "string",
-                        "enum": ["Custom"]
-                    },
-                    "savetoexcel":{ "type":"boolean" },
-                    "path":{ "type": "string" },
-                    "displaycolumns": { 
-                        "anyOf": [
-                            { "type": "array", "items": { "type": "string" } },
-                            { "type": "string" }
-                        ]
-                    },
-                    "registertable": {"anyOf":[{"type":"string"},{"type":"boolean"}]}
-                },
-                "required": ["typeofcomparison", "displaycolumns"]
-            },
             {
                 "type": "object",
+                "title": "Table Comparison Query",
+                "description": "Queries that compare columns within a single table",
                 "properties": {
-                    "name": { "type": "string" },
-                    "path": { "type": "string" },
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the query (used for sheet names)"
+                    },
                     "typeofcomparison": {
                         "type": "string",
-                        "enum": ["Read Excel Data"]
+                        "enum": ["Total Match", "Parcial Match", "Combine Two Columns", "Amount Difference"],
+                        "description": "Type of comparison to perform"
+                    },
+                    "column1": {
+                        "type": "string",
+                        "description": "First column to compare"
+                    },
+                    "column2": {
+                        "type": "string",
+                        "description": "Second column to compare"
                     },
                     "savetoexcel": {
                         "type": "boolean",
+                        "description": "Whether to save results to Excel",
                         "default": false
+                    },
+                    "displaycolumns": {
+                        "anyOf": [
+                            {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "List of columns to display"
+                            },
+                            {
+                                "type": "string",
+                                "enum": ["All"],
+                                "description": "Display all columns"
+                            }
+                        ],
+                        "description": "Columns to display in results"
+                    },
+                    "registertable": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "description": "Register result as a table with this name"
+                            },
+                            {
+                                "type": "boolean",
+                                "description": "Whether to register as a table"
+                            }
+                        ],
+                        "description": "Register the result as a table for later queries"
+                    },
+                    "table1": {
+                        "type": "string",
+                        "description": "Table to query from"
+                    },
+                    "threshold": {
+                        "type": "number",
+                        "description": "Threshold for amount difference queries",
+                        "default": 0
+                    },
+                    "comment": {
+                        "type": "string",
+                        "description": "Optional comment about the query"
                     }
-    
                 },
-                "required": ["name", "path", "typeofcomparison"]
+                "required": ["name", "typeofcomparison", "column1", "column2", "displaycolumns", "table1"]
+            },
+            {
+                "type": "object",
+                "title": "Join Query",
+                "description": "Queries that join two tables",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the query (used for sheet names)"
+                    },
+                    "typeofcomparison": {
+                        "type": "string",
+                        "enum": ["Inner Join", "Outer Join"],
+                        "description": "Type of join to perform"
+                    },
+                    "column1": {
+                        "type": "string",
+                        "description": "Join column from first table"
+                    },
+                    "column2": {
+                        "type": "string",
+                        "description": "Join column from second table"
+                    },
+                    "savetoexcel": {
+                        "type": "boolean",
+                        "description": "Whether to save results to Excel",
+                        "default": false
+                    },
+                    "displaycolumns": {
+                        "anyOf": [
+                            {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "List of columns to display"
+                            },
+                            {
+                                "type": "string",
+                                "enum": ["All"],
+                                "description": "Display all columns"
+                            }
+                        ],
+                        "description": "Columns to display in results"
+                    },
+                    "registertable": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "description": "Register result as a table with this name"
+                            },
+                            {
+                                "type": "boolean",
+                                "description": "Whether to register as a table"
+                            }
+                        ],
+                        "description": "Register the result as a table for later queries"
+                    },
+                    "table1": {
+                        "type": "string",
+                        "description": "First table to join"
+                    },
+                    "table2": {
+                        "type": "string",
+                        "description": "Second table to join"
+                    },
+                    "comment": {
+                        "type": "string",
+                        "description": "Optional comment about the query"
+                    }
+                },
+                "required": ["name", "typeofcomparison", "column1", "column2", "displaycolumns", "table1", "table2"]
+            },
+            {
+                "type": "object",
+                "title": "Custom Query",
+                "description": "Custom SQL queries from files",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the query (used for sheet names)"
+                    },
+                    "typeofcomparison": {
+                        "type": "string",
+                        "enum": ["Custom"],
+                        "description": "Custom query type"
+                    },
+                    "savetoexcel": {
+                        "type": "boolean",
+                        "description": "Whether to save results to Excel",
+                        "default": false
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": "Path to SQL file"
+                    },
+                    "displaycolumns": {
+                        "anyOf": [
+                            {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "description": "List of columns to display"
+                            },
+                            {
+                                "type": "string",
+                                "enum": ["All"],
+                                "description": "Display all columns"
+                            }
+                        ],
+                        "description": "Columns to display in results"
+                    },
+                    "registertable": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "description": "Register result as a table with this name"
+                            },
+                            {
+                                "type": "boolean",
+                                "description": "Whether to register as a table"
+                            }
+                        ],
+                        "description": "Register the result as a table for later queries"
+                    },
+                    "comment": {
+                        "type": "string",
+                        "description": "Optional comment about the query"
+                    }
+                },
+                "required": ["name", "typeofcomparison", "path", "displaycolumns"]
+            },
+            {
+                "type": "object",
+                "title": "Excel Data Load",
+                "description": "Load data from Excel files",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the data load operation"
+                    },
+                    "path": {
+                        "type": "string",
+                        "description": "Path to Excel file"
+                    },
+                    "typeofcomparison": {
+                        "type": "string",
+                        "enum": ["Read Excel Data"],
+                        "description": "Read Excel data type"
+                    },
+                    "savetoexcel": {
+                        "type": "boolean",
+                        "description": "Whether to save results to Excel",
+                        "default": false
+                    },
+                    "registertable": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "description": "Register loaded data as a table with this name"
+                            },
+                            {
+                                "type": "boolean",
+                                "description": "Whether to register as a table"
+                            }
+                        ],
+                        "description": "Register the loaded data as a table for queries",
+                        "default": false
+                    },
+                    "comment": {
+                        "type": "string",
+                        "description": "Optional comment about the data load"
+                    }
+                },
+                "required": ["name", "path", "typeofcomparison", "registertable"]
             }
         ]
     }

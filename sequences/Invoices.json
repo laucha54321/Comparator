@@ -3,31 +3,91 @@
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/01-12-2025/SAP Invoices.xlsx",
+        "path": "./database/03-12-2025/SAP Invoices.xlsx",
         "registertable":"SAP_INVOICES"
     },
     {
         "name":"Load SFDC Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/01-12-2025/Access - Invoices Report.xlsx",
+        "path": "./database/03-12-2025/Access - Invoices Report.xlsx",
         "registertable":"SFDC_INVOICES"
     },
     {
         "name":"Join SFDC SAP",
         "typeofcomparison":"Custom",
-        "path":"./Querys/joinInnerQueryInvoices.sql",
-        "savetoexcel": false,
+        "path":"./querys/custom/joinInnerQueryInvoices.sql",
+        "savetoexcel": true,
         "displaycolumns": "All",
         "registertable":"joined_sap_sfdc"
     },
     {
-        "name":"Bill QTY Mismatch",
+        "name":"Join SFDC SAP",
+        "typeofcomparison":"Custom",
+        "path":"./querys/custom/joinInnerQueryInvoices.sql",
+        "savetoexcel": true,
+        "displaycolumns": "All",
+        "registertable":"joined_sap_sfdc"
+    },
+    {
+        "name": "Net Value Mismatch",
+        "savetoexcel": true,
+        "typeofcomparison": "Amount Difference",
+        "table1": "joined_sap_sfdc",
+        "column1": "Net Value",
+        "column2": "Net Value_1",
+        "threshold": 1,
+        "displaycolumns": [
+            "Billing Document",
+            "Item",
+            "Net Value",
+            "Net Value_1"
+        ],
+        "registertable": false,
+        "comment": "Check for net value differences greater than threshold"
+    },
+    {
+        "name": "Tax Value Mismatch",
+        "savetoexcel": true,
+        "typeofcomparison": "Amount Difference",
+        "table1": "joined_sap_sfdc",
+        "column1": "Tax Amount",
+        "column2": "Tax Value",
+        "threshold": 1,
+        "displaycolumns": [
+            "Billing Document",
+            "Item",
+            "Net Value",
+            "Net Value_1"
+        ],
+        "registertable": false,
+        "comment": "Check for net value differences greater than threshold"
+    },
+    {
+        "name":"Bill Qty",
         "savetoexcel":true,
-        "table":"joined_sap_sfdc",
+        "table1":"joined_sap_sfdc",
         "typeofcomparison":"Total Match",
-        "sapcolumn":"Billed Qty",
-        "sfdccolumn":"Bill QTY BAG",
-        "displaycolumns":["Billing Document","Line Number","Billed Qty","Bill QTY BAG"]
+        "column1":"Invoiced Quantity",
+        "column2":"Bill QTY",
+        "displaycolumns":["Billing Document","Item","Invoiced Quantity","Bill QTY BAG"]
+    },
+    {
+        "name":"Ship to Party: Shipping Address SAP Code",
+        "savetoexcel":true,
+        "table1":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "column1":"Ship to Party: Shipping Address SAP Code",
+        "column2":"Bill QTY",
+        "displaycolumns":["Billing Document","Item","Invoiced Quantity","Bill QTY BAG"]
+    },
+    {
+        "name":"Batch Mismatch",
+        "savetoexcel":true,
+        "table1":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "column1":"Batch",
+        "column2":"Batch_1",
+        "displaycolumns":["Billing Document","Item","Batch","Batch"]
     }
 ]

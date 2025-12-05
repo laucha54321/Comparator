@@ -1,5 +1,6 @@
-SELECT *
-FROM SAP_ORDERS AS sap
-FULL OUTER JOIN SFDC_ORDERS AS sfdc
-  ON sfdc."SAP Order Number" = sap."Sales Document"
-WHERE sfdc."SAP Order Number" IS NULL OR sap."Sales Document" IS NULL;
+SELECT 
+  $displaycolumns
+FROM "$table1" AS "$table1"
+FULL OUTER JOIN "$table2" AS "$table2"
+  ON "$table1"."$column1" = "$table2"."$column2"
+WHERE "$table1"."$column1" IS NULL OR "$table2"."$column2" IS NULL;
