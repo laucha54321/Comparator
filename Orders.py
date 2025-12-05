@@ -161,32 +161,6 @@ def readExcel(path):
         except Exception as e: 
                print(f"Error Message: \n {e}")
 
-""" ## Read Files#########################################################
-sap_df = readExcel("./Database/Orders/SAP - ZSD18A_ARG/Orders.xlsx")
-sfdc_df = readExcel("./Database/Orders/SFDC - Access - Integrity Order Report/Access - Integrity Order Report-2025-06-26-09-20-03.xlsx")
-######################################################################
-
-
-######################################################################
-## RAW DATA SAP ######################################################
-duckdb.register("SAP_ORDERS_LINEITEMS", sap_df)
-######################################################################
-
-## Query for unifying SAP Line Items. ################################
-with open('./Querys/unify_SAP_LineItems.sql', 'r') as file:
-        QUERY_SAP_ORDERS = file.read()
-
-sap_orders_df = duckdb.query(QUERY_SAP_ORDERS).to_df()
-duckdb.register("SAP_ORDERS", sap_orders_df)
-print(f"SAP Orders {len(sap_orders_df)} (line items combined in 1 row)")
-
-duckdb.execute("DROP VIEW IF EXISTS SAP_ORDERS_LINEITEMS")
-######################################################################
-
-## RAW DATA SFDC #####################################################
-duckdb.register("SFDC_ORDERS", sfdc_df)
-######################################################################
-##################################################################### """
 
 for elm in document:
       appFlowControl(elm)
