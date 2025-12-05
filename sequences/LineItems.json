@@ -3,21 +3,21 @@
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/14-11-2025/SAP DB.xlsx",
+        "path": "./database/05-12-2025/SAP Orders.xlsx",
         "registertable":"SAP_ORDERS_LINEITEMS"
     },
     {
         "name":"Load SFDC Line Items Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./Database/14-11-2025/Access - Integrity Line Item Report.xlsx",
+        "path": "./database/05-12-2025/Access - Integrity Line Item Report.xlsx",
         "registertable":"SFDC_ORDERS"
     },
     {
         "name":"Join Line Items SFDC SAP",
         "typeofcomparison":"Custom",
         "savetoexcel": true,
-        "path":"./Querys/joinInner_byLineItem.sql",
+        "path":"./querys/custom/joinInner_byLineItem.sql",
         "displaycolumns": "All",
         "registertable":"joined_sap_sfdc"
     },
@@ -26,35 +26,49 @@
         "typeofcomparison":"Custom",
         "savetoexcel": true,
         "registertable":false,
-        "path":"./Querys/joinOuterQuery-lineItem.sql",
+        "path":"./querys/custom/joinOuterQuery-lineItem.sql",
         "displaycolumns": "All",
         "comment":"This query is not adapted yet for parameter calling. It is Hardcoded, so previous actions should not be modified if this query is being used."
     },
     {
         "name":"Material Code Mismatch",
         "savetoexcel":true,
-        "table":"joined_sap_sfdc",
+        "table1":"joined_sap_sfdc",
         "typeofcomparison":"Total Match",
         "column1":"Material",
         "column2":"Product Code",
         "displaycolumns":["Sales Document","Sales Document Item","Material","Product Code"]
     },
     {
-        "name":"Quantity Mismatch",
-        "savetoexcel":true,
-        "table":"joined_sap_sfdc",
-        "typeofcomparison":"Total Match",
-        "column1":"Quantity",
-        "column2":"Order Quantity",
-        "displaycolumns":["Sales Document","Sales Document Item","Quantity","Order Quantity"]
+        "name": "Quantity Mismatch",
+        "savetoexcel": true,
+        "typeofcomparison": "Amount Difference",
+        "table1": "joined_sap_sfdc",
+        "column1": "Quantity",
+        "column2": "Order Quantity",
+        "threshold": 0,
+        "displaycolumns": [
+            "Sales Document",
+            "Sales Document Item",
+            "Quantity",
+            "Order Quantity"
+        ],
+        "registertable": false
     },
     {
-        "name":"Rejected Mismatch",
-        "savetoexcel":true,
-        "table":"joined_sap_sfdc",
-        "typeofcomparison":"Total Match",
-        "column1":"Total Rejected Qty",
-        "column2":"Rejected Qty",
-        "displaycolumns":["Sales Document","Sales Document Item","Total Rejected Qty","Rejected Qty"]
+        "name": "Rejected Mismatch",
+        "savetoexcel": true,
+        "typeofcomparison": "Amount Difference",
+        "table1": "joined_sap_sfdc",
+        "column1": "Total Rejected Qty",
+        "column2": "Rejected Qty",
+        "threshold": 0,
+        "displaycolumns": [
+            "Sales Document",
+            "Sales Document Item",
+            "Total Rejected Qty",
+            "Rejected Qty"
+        ],
+        "registertable": false
     }
 ]

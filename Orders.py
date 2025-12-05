@@ -23,7 +23,7 @@ print(r"""
 
 DEBUGING = False
 
-querysPath = './sequences/Orders.json'
+querysPath = './sequences/LineItems.json'
 querysSchema = './querys-schema.json'
 
 validateJson(document_path=querysPath,schema=querysSchema)

@@ -3,25 +3,15 @@
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./database/01-12-2025/SAP Orders.xlsx",
+        "path": "./database/05-12-2025/SAP Orders.xlsx",
         "registertable":"SAP_ORDERS_LINEITEMS"
     },
     {
         "name":"Load SFDC Orders Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./database/01-12-2025/Access - Integrity Order Report.xlsx",
+        "path": "./database/05-12-2025/Access - Integrity Order Report.xlsx",
         "registertable":"SFDC_ORDERS"
-    },
-    {
-        "name":"Combine",
-        "typeofcomparison":"Combine Two Columns",
-        "savetoexcel": true,
-        "table1":"SAP_ORDERS_LINEITEMS",
-        "column1":"Sales Document",
-        "column2":"Sales Document",
-        "registercolumn":"combination",
-        "registertable":false
     },
     {
         "name":"Unify Items",
