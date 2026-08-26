@@ -1,4 +1,3 @@
-SELECT
-    $displaycolumns
+SELECT $displaycolumns
 FROM $table1
-WHERE Cast("$column2" as VARCHAR) != Cast("$column1"as VARCHAR);
+WHERE "$column2" IS DISTINCT FROM "$column1"

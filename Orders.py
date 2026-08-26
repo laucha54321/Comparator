@@ -23,7 +23,7 @@ print(r"""
 
 DEBUGING = False
 
-querysPath = './sequences/LineItems.json'
+querysPath = './sequences/Invoices.json'
 querysSchema = './querys-schema.json'
 
 validateJson(document_path=querysPath,schema=querysSchema)
@@ -101,6 +101,8 @@ def appFlowControl(data):
 
         print(f"\n============================================================\n| {data["name"].upper()} | {data["typeofcomparison"]}. |\n============================================================\n")
         
+
+
         if(data["typeofcomparison"]) == "Total Match":
                 query = generate_sql_from_template(readQueryTemplate('./querys/totalMatch.sql'), data)
                 df = applyQuery(query)
@@ -117,10 +119,26 @@ def appFlowControl(data):
         elif(data["typeofcomparison"] == "Amount Difference"):
                 query = generate_sql_from_template(readQueryTemplate('./querys/amountDifference.sql'), data)
                 df = applyQuery(query)
-        elif(data["typeofcomparison"]) == "Read Excel Data":
-                df = readExcel(data["path"])
                 if(data["registertable"]):
                         duckdb.register(view_name=data["registertable"], python_object=df)
+        elif data["typeofcomparison"] == "Read Excel Data":
+            df = readExcel(data["path"])
+            reg_name = data.get("registertable")
+            if reg_name:
+                # Verificar si la tabla ya existe (como tabla persistente)
+                existing_tables = duckdb.execute("SHOW TABLES").fetchdf()["name"].tolist()
+                if reg_name in existing_tables:
+                    # Append: la tabla ya existe, insertamos los nuevos registros
+                    duckdb.execute(f"INSERT INTO {reg_name} SELECT * FROM df")
+                    print(f"Appended {len(df)} filas a la tabla '{reg_name}'")
+                else:
+                    # Crear la tabla por primera vez
+                    duckdb.execute(f"CREATE TABLE {reg_name} AS SELECT * FROM df")
+                    print(f"Tabla '{reg_name}' creada con {len(df)} filas")
+
+        elif(data["typeofcomparison"]) == "Delete Row":
+                query = generate_sql_from_template(readQueryTemplate('./querys/deleteRow.sql'), data)
+                df = applyQuery(query)
         elif(data["typeofcomparison"]) == "Custom":
                 df = applyQuery(readQueryTemplate(data["path"]))
                 if(data["registertable"]):
@@ -141,7 +159,10 @@ def appFlowControl(data):
                 print(f"Error Message: No query applied. The query type {data["typeofcomparison"]} does not exists. ")
                 return
         
-        print(f"{data["name"].upper()} has {len(df)} unique rows")
+        try:
+                print(f"{data["name"].upper()} has {len(df)} unique rows")
+        except:
+               print("error at print statement.")
 
         if data["savetoexcel"]:
                 try:

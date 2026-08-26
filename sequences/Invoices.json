@@ -1,16 +1,58 @@
-[
+[       
     {
-        "name":"Load SAP Data",
+        "name":"Load SAP Header Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./database/03-12-2025/SAP Invoices.xlsx",
+        "path": "./database/2021/SAP Invoices.xlsx",
+        "registertable":"SAP_INVOICES"
+    },
+    {
+        "name":"Load SAP Header Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./database/2027/SAP Invoices.xlsx",
+        "registertable":"SAP_INVOICES"
+    },
+    {
+        "name":"Load SAP Header Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./database/2022/SAP Invoices.xlsx",
+        "registertable":"SAP_INVOICES"
+    },
+    {
+        "name":"Load SAP Header Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./database/2023/SAP Invoices.xlsx",
+        "registertable":"SAP_INVOICES"
+    },
+    {
+        "name":"Load SAP Header Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./database/2024/SAP Invoices.xlsx",
+        "registertable":"SAP_INVOICES"
+    },
+    {
+        "name":"Load SAP Header Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./database/2025/SAP Invoices.xlsx",
+        "registertable":"SAP_INVOICES"
+    },
+    {
+        "name":"Load SAP Header Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./database/2026/SAP Invoices.xlsx",
         "registertable":"SAP_INVOICES"
     },
     {
         "name":"Load SFDC Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./database/03-12-2025/Access - Invoices Report.xlsx",
+        "path": "./database/Access Invoice & Line ltem.xlsx",
         "registertable":"SFDC_INVOICES"
     },
     {
@@ -22,64 +64,120 @@
         "registertable":"joined_sap_sfdc"
     },
     {
-        "name":"Join SFDC SAP",
+        "name":"Outer SFDC SAP",
         "typeofcomparison":"Custom",
-        "path":"./querys/custom/joinInnerQueryInvoices.sql",
+        "path":"./querys/custom/joinOuterQueryInvoices.sql",
         "savetoexcel": true,
         "displaycolumns": "All",
-        "registertable":"joined_sap_sfdc"
+        "registertable":"outerjoined_sap_sfdc"
+    },
+    {
+        "name": "Net Value Mismatch (not final)",
+        "savetoexcel": true,
+        "typeofcomparison": "Amount Difference",
+        "table1": "joined_sap_sfdc",
+        "column1": "Net Value",
+        "column2": "Net Value in Document Curr",
+        "threshold": 10,
+        "displaycolumns": [
+            "Billing Document",
+            "Line Number",
+            "Net Value",
+            "Net Value in Document Curr",
+            "Net value in document currency in advanc"
+        ],
+        "registertable": "Net_Value_Mismatch",
+        "comment": "Check for net value differences greater than threshold. This first line only compares to future payments. Any advanced payment will actually get flagged as a mismatch at this point."
     },
     {
         "name": "Net Value Mismatch",
         "savetoexcel": true,
         "typeofcomparison": "Amount Difference",
-        "table1": "joined_sap_sfdc",
+        "table1": "Net_Value_Mismatch",
         "column1": "Net Value",
-        "column2": "Net Value_1",
-        "threshold": 1,
+        "column2": "Net value in document currency in advanc",
+        "threshold": 10,
         "displaycolumns": [
             "Billing Document",
-            "Item",
+            "Line Number",
             "Net Value",
-            "Net Value_1"
+            "Net Value in Document Curr",
+            "Net value in document currency in advanc"
         ],
         "registertable": false,
-        "comment": "Check for net value differences greater than threshold"
+        "comment": "Here we compare the results of the previous comparisson so that we can remove all the lines that are not actually a mismatch since the amount was payed in advacned."
     },
     {
         "name": "Tax Value Mismatch",
         "savetoexcel": true,
         "typeofcomparison": "Amount Difference",
         "table1": "joined_sap_sfdc",
-        "column1": "Tax Amount",
+        "column1": "Tax",
         "column2": "Tax Value",
         "threshold": 1,
         "displaycolumns": [
             "Billing Document",
-            "Item",
-            "Net Value",
-            "Net Value_1"
+            "Line Number",
+            "Tax",
+            "Tax Value"
         ],
         "registertable": false,
         "comment": "Check for net value differences greater than threshold"
     },
     {
-        "name":"Bill Qty",
-        "savetoexcel":true,
-        "table1":"joined_sap_sfdc",
-        "typeofcomparison":"Total Match",
-        "column1":"Invoiced Quantity",
-        "column2":"Bill QTY",
-        "displaycolumns":["Billing Document","Item","Invoiced Quantity","Bill QTY BAG"]
+        "name": "Commision Value Mismatch",
+        "savetoexcel": true,
+        "typeofcomparison": "Amount Difference",
+        "table1": "joined_sap_sfdc",
+        "column1": "ZC20 - Condition type",
+        "column2": "Commission AMount Formula",
+        "threshold": 0,
+        "displaycolumns": [
+            "Billing Document",
+            "Line Number",
+            "ZC20 - Condition type",
+            "Commission AMount Formula"
+        ],
+        "registertable": false,
+        "comment": "Check for net value differences greater than threshold"
     },
     {
-        "name":"Ship to Party: Shipping Address SAP Code",
+        "name":"Bill Qty Mismatch",
+        "savetoexcel":true,
+        "table1":"joined_sap_sfdc",
+        "typeofcomparison":"Amount Difference",
+        "threshold": 0,
+        "column1":"Billed QTY",
+        "column2":"Bill QTY",
+        "registertable": false,
+        "displaycolumns":["Billing Document","Line Number","Billed QTY","Bill QTY"]
+    },
+    {
+        "name":"Sold to party Mismatch",
         "savetoexcel":true,
         "table1":"joined_sap_sfdc",
         "typeofcomparison":"Total Match",
-        "column1":"Ship to Party: Shipping Address SAP Code",
-        "column2":"Bill QTY",
-        "displaycolumns":["Billing Document","Item","Invoiced Quantity","Bill QTY BAG"]
+        "column1":"Customer Code",
+        "column2":"Customer SAP Code",
+        "displaycolumns":["Billing Document","Line Number","Customer Code","Sold to Customer Code"]
+    },
+    {
+        "name":"Argentine Factura Mismatch",
+        "savetoexcel":true,
+        "table1":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "column1":"Argentine Factura",
+        "column2":"Invoice Number (External)",
+        "displaycolumns":["Billing Document","Line Number","Argentine Factura","Invoice Number (External)"]
+    },
+    {
+        "name":"Argentine Remito Mismatch",
+        "savetoexcel":true,
+        "table1":"joined_sap_sfdc",
+        "typeofcomparison":"Total Match",
+        "column1":"Argentine Remito",
+        "column2":"Dispatch Number (External)",
+        "displaycolumns":["Billing Document","Line Number","Argentine Remito","Dispatch Number (External)"]
     },
     {
         "name":"Batch Mismatch",
@@ -88,6 +186,6 @@
         "typeofcomparison":"Total Match",
         "column1":"Batch",
         "column2":"Batch_1",
-        "displaycolumns":["Billing Document","Item","Batch","Batch"]
+        "displaycolumns":["Billing Document","Line Number","Batch","Batch_1"]
     }
 ]

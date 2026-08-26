@@ -3,14 +3,14 @@
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./database/05-12-2025/SAP Orders.xlsx",
+        "path": "./database/2026/SAP Orders.xlsx",
         "registertable":"SAP_ORDERS_LINEITEMS"
     },
     {
         "name":"Load SFDC Orders Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./database/05-12-2025/Access - Integrity Order Report.xlsx",
+        "path": "./database/Access - Integrity Order Report.xlsx",
         "registertable":"SFDC_ORDERS"
     },
     {
@@ -23,19 +23,19 @@
         "comment":"This query is not adapted yet for parameter calling. It is Hardcoded, so previous actions should not be modified if this query is being used."
     },
     {
-        "name":"Join Outer SFDC SAP",
-        "typeofcomparison":"Outer Join",
+        "name":"Join Inner SFDC SAP",
+        "typeofcomparison":"Inner Join",
         "savetoexcel": true,
         "table1":"SAP_ORDERS",
         "table2":"SFDC_ORDERS",
         "column1":"Sales Document",
         "column2":"SAP Order Number",
         "displaycolumns": "All",
-        "registertable":false
+        "registertable":"joined_sap_sfdc"
     },
     {
-        "name":"Join Inner SFDC SAP",
-        "typeofcomparison":"Inner Join",
+        "name":"Outer Inner SFDC SAP",
+        "typeofcomparison":"Outer Join",
         "savetoexcel": true,
         "table1":"SAP_ORDERS",
         "table2":"SFDC_ORDERS",
@@ -54,9 +54,11 @@
         "threshold": 10,
         "displaycolumns": [
             "Sales Document",
+            "Billing Date",
             "Cust. Code",
             "Order Amount",
-            "Importe Neto"
+            "Importe Neto",
+            "Total Value"
         ],
         "registertable": false
     },
@@ -67,7 +69,12 @@
         "typeofcomparison":"Total Match",
         "column1":"Customer Group 2",
         "column2":"Sales Office: Territory Code",
-        "displaycolumns":["Sales Document","Sales Office: Territory Code","Customer Group 2","Billing Date"]
+        "displaycolumns":[
+            "Sales Document",
+            "Sales Office: Territory Code",
+            "Customer Group 2",
+            "Billing Date"
+        ]
     },
     {
         "name":"Cons. Code Mismatch",
@@ -76,17 +83,12 @@
         "typeofcomparison":"Parcial Match",
         "column1":"Cons. Code",
         "column2":"Shipping Address",
-        "displaycolumns":["Sales Document","Cons. Code","Shipping Address","Billing Date"],
-        "comment":"The order of the columns is relevant. The entire code in column1 will be validated if it is inside column 2. So column1 should be contained inside column two, not the other way around."
-    },
-    {
-        "name":"Commision Agent Mismatch",
-        "savetoexcel":true,
-        "table1":"joined_sap_sfdc",
-        "typeofcomparison":"Parcial Match",
-        "column1":"Commission Agent Desc.",
-        "column2":"Commission Agent (Reporting)",
-        "displaycolumns":["Sales Document","Commission Agent Desc.","Commission Agent (Reporting)"],
+        "displaycolumns":[
+            "Sales Document",
+            "Cons. Code",
+            "Shipping Address",
+            "Billing Date"
+        ],
         "comment":"The order of the columns is relevant. The entire code in column1 will be validated if it is inside column 2. So column1 should be contained inside column two, not the other way around."
     },
     {
@@ -96,6 +98,10 @@
         "typeofcomparison":"Total Match",
         "column1":"Tax Number 1 (CNPJ No.)",
         "column2":"Account Name: SAP Tax Number 1",
-        "displaycolumns":["Sales Document","Account Name: SAP Tax Number 1","Tax Number 1 (CNPJ No.)"]
+        "displaycolumns":[
+            "Sales Document",
+            "Account Name: SAP Tax Number 1",
+            "Tax Number 1 (CNPJ No.)"
+        ]
     }
 ]

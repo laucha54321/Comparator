@@ -1,0 +1,44 @@
+[
+    {
+        "name":"Load SFDC Client Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./database/Cliente Linea Credito Exposicion/Ageing por cuenta.xlsx",
+        "registertable":"SFDC_Clients"
+    },
+    {
+        "name":"Load SAP Client Data",
+        "typeofcomparison":"Read Excel Data",
+        "savetoexcel": false,
+        "path": "./database/Cliente Linea Credito Exposicion/ZSD56.xlsx",
+        "registertable":"SAP_Clients"
+    },
+    {
+        "name":"Join Inner SFDC SAP",
+        "typeofcomparison":"Inner Join",
+        "savetoexcel": true,
+        "table1":"SFDC_Clients",
+        "table2":"SAP_Clients",
+        "column1":"SAP Code",
+        "column2":"Customer Code",
+        "displaycolumns": "All",
+        "registertable":"joined_sap_sfdc"
+    },
+    {
+        "name": "Exposure Mismatch",
+        "savetoexcel": true,
+        "typeofcomparison": "Amount Difference",
+        "table1": "joined_sap_sfdc",
+        "column1": "Open Items",
+        "column2": "Net Outstanding",
+        "threshold": 1,
+        "displaycolumns": [
+            "SAP Code",
+            "Open Items",
+            "Open Specials",
+            "Net Outstanding"
+        ],
+        "registertable": false,
+        "comment": "Check for net value differences greater than threshold"
+    }
+]

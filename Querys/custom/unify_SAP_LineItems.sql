@@ -2,6 +2,7 @@ SELECT
   "Sales Document", 
   MAX("Cust. Code") AS "Cust. Code", 
   MAX("Cons. Code") AS "Cons. Code",
+  MAX("Billing Date") AS "Billing Date",
   MAX("Pay Term") AS "Pay Term",
   MAX("Tax Number 1 (CNPJ No.)") AS "Tax Number 1 (CNPJ No.)",
   MAX("Customer Group 2") AS "Customer Group 2",

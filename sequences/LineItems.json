@@ -3,14 +3,14 @@
         "name":"Load SAP Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./database/05-12-2025/SAP Orders.xlsx",
+        "path": "./database/28-01-2026/SAP Orders.xlsx",
         "registertable":"SAP_ORDERS_LINEITEMS"
     },
     {
         "name":"Load SFDC Line Items Data",
         "typeofcomparison":"Read Excel Data",
         "savetoexcel": false,
-        "path": "./database/05-12-2025/Access - Integrity Line Item Report.xlsx",
+        "path": "./database/28-01-2026/Access - Integrity Line Item Report.xlsx",
         "registertable":"SFDC_ORDERS"
     },
     {
@@ -22,22 +22,18 @@
         "registertable":"joined_sap_sfdc"
     },
     {
-        "name":"Outer Join Line Items",
-        "typeofcomparison":"Custom",
-        "savetoexcel": true,
-        "registertable":false,
-        "path":"./querys/custom/joinOuterQuery-lineItem.sql",
-        "displaycolumns": "All",
-        "comment":"This query is not adapted yet for parameter calling. It is Hardcoded, so previous actions should not be modified if this query is being used."
-    },
-    {
         "name":"Material Code Mismatch",
         "savetoexcel":true,
         "table1":"joined_sap_sfdc",
         "typeofcomparison":"Total Match",
         "column1":"Material",
         "column2":"Product Code",
-        "displaycolumns":["Sales Document","Sales Document Item","Material","Product Code"]
+        "displaycolumns":[
+            "Sales Document",
+            "Sales Document Item",
+            "Material",
+            "Product Code"
+        ]
     },
     {
         "name": "Quantity Mismatch",
