@@ -5,9 +5,45 @@ import json
 from string import Template
 
 from schemaValidator import validateJson
+from colorama import init, Fore, Back, Style
+
+# Initialize colorama (auto-reset, works on Windows)
+init(autoreset=True)
+
+# Define some convenient color constants (optional)
+GREEN = Fore.GREEN
+YELLOW = Fore.YELLOW
+RED = Fore.RED
+CYAN = Fore.CYAN
+MAGENTA = Fore.MAGENTA
+BOLD = Style.BRIGHT
+RESET = Style.RESET_ALL
+
+import sys
+import traceback
+
+def wait_on_exit():
+    """Pause for user input if the script is compiled to an executable."""
+    if getattr(sys, 'frozen', False):
+        input("\nPress Enter to exit...")
+
+def global_exception_handler(exc_type, exc_value, exc_traceback):
+    """Catch any unhandled exception, print it nicely, and wait for Enter."""
+    print("\n" + "="*50)
+    print("⚠️  AN UNEXPECTED ERROR OCCURRED:")
+    print(f"Error Type: {exc_type.__name__}")
+    print(f"Message: {exc_value}")
+    print("\n--- Full Traceback ---")
+    traceback.print_tb(exc_traceback)
+    print("="*50)
+    wait_on_exit()
+
+# Override Python's default exception handler
+sys.excepthook = global_exception_handler
 
 
-print(r"""
+print(f"""
+{BOLD}{CYAN}
    _____                                      _             
   / ____|                                    | |            
  | |     ___  _ __ ___  _ __   __ _ _ __ __ _| |_ ___  _ __ 
@@ -16,14 +52,66 @@ print(r"""
   \_____\___/|_| |_| |_| .__/ \__,_|_|  \__,_|\__\___/|_|   
                        | |                                  
                        |_|                                  
-      
-                
-                  -- by Laureano Oliva --                                             
+{RESET}
+{YELLOW}                  -- by Laureano Oliva --{RESET}
+
+  Read-Me: https://github.com/laucha54321/Comparator
 """)
 
 DEBUGING = False
 
-querysPath = './sequences/Invoices.json'
+### ---- NEW MENU: SELECT SEQUENCE FILE ----
+sequences_folder = './sequences'
+
+# 1. Check if the folder exists
+if not os.path.exists(sequences_folder):
+    print(f"ERROR: Folder '{sequences_folder}' not found!")
+    print("Please make sure the 'sequences' folder is in the same directory as this program.")
+    sys.exit(1)
+
+# 2. List all .json files in the folder
+json_files = []
+for file in os.listdir(sequences_folder):
+    if file.endswith('.json'):
+        json_files.append(file)
+
+# 3. If no JSON files found, exit
+if not json_files:
+    print(f"ERROR: No JSON sequence files found in '{sequences_folder}'!")
+    sys.exit(1)
+
+# 4. Display the menu
+print("\n" + "="*50)
+print("     AVAILABLE SEQUENCE FILES")
+print("="*50)
+for idx, filename in enumerate(json_files, start=1):
+    print(f"  [{idx}] {filename}")
+print("  [0] Exit / Cancel")
+print("="*50)
+
+# 5. Get user selection
+while True:
+    try:
+        choice = input(f"\nSelect a sequence (1-{len(json_files)}) or 0 to exit: ")
+        choice_num = int(choice)
+        
+        if choice_num == 0:
+            print("Exiting program.")
+            sys.exit(0)
+        elif 1 <= choice_num <= len(json_files):
+            selected_file = json_files[choice_num - 1]
+            break
+        else:
+            print(f"Invalid choice. Please enter a number between 0 and {len(json_files)}.")
+    except ValueError:
+        print("Invalid input. Please enter a number.")
+
+# 6. Set the path to the selected file
+querysPath = os.path.join(sequences_folder, selected_file)
+print(f"\n>>> Selected: {selected_file}\n")
+
+### ---- END OF MENU ----
+
 querysSchema = './querys-schema.json'
 
 validateJson(document_path=querysPath,schema=querysSchema)
@@ -99,7 +187,7 @@ def appFlowControl(data):
                 return
                 
 
-        print(f"\n============================================================\n| {data["name"].upper()} | {data["typeofcomparison"]}. |\n============================================================\n")
+        print(f"\n============================================================\n| {BOLD}{CYAN}{data["name"].upper()}{RESET} |{BOLD}{CYAN} {data["typeofcomparison"]}. {RESET}|\n============================================================\n")
         
 
 
@@ -130,11 +218,11 @@ def appFlowControl(data):
                 if reg_name in existing_tables:
                     # Append: la tabla ya existe, insertamos los nuevos registros
                     duckdb.execute(f"INSERT INTO {reg_name} SELECT * FROM df")
-                    print(f"Appended {len(df)} filas a la tabla '{reg_name}'")
+                    print(f"Appended {len(df)} rows to table '{reg_name}'")
                 else:
                     # Crear la tabla por primera vez
                     duckdb.execute(f"CREATE TABLE {reg_name} AS SELECT * FROM df")
-                    print(f"Tabla '{reg_name}' creada con {len(df)} filas")
+                    print(f"Tabel '{reg_name}' created with {len(df)} rows")
 
         elif(data["typeofcomparison"]) == "Delete Row":
                 query = generate_sql_from_template(readQueryTemplate('./querys/deleteRow.sql'), data)
@@ -186,5 +274,4 @@ def readExcel(path):
 for elm in document:
       appFlowControl(elm)
 
-
-
+wait_on_exit() 
